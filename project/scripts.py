@@ -1,31 +1,31 @@
-import importlib
-import inspect
-import os
-import sys
-
-from .testing import TestCase
-
+import importlib, os, sys
 import nose
-from nose.suite import ContextSuite
 
 def runtests():
-    files = []
+    modnames = []
     dirs = set()
     for modname in sys.argv[1:]:
-        files.append(modname)
+        modnames.append(modname)
 
         mod = importlib.import_module(modname)
         fname = mod.__file__
         dirs.add(os.path.dirname(fname))
 
-    print "files:"
-    for f in files: print '  %s' % f
-    print "dirs:"
-    for f in dirs: print '  %s' % f
-    files = list(dirs) + files
-    print "  all: %s" % files
-    print "=" * 20
-    nose.run(argv=files + ['-v'],)
+    modnames = list(dirs) + modnames
+
+    nose.run(argv=modnames
+             # + ['-v']
+             # + ['-a', 'safe']
+    )
+
+#######################################################
+# doesn't work:
+
+import inspect
+
+from .testing import TestCase
+
+from nose.suite import ContextSuite
 
 def runsuite():
     funcs = [m[1] for m in
